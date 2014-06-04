@@ -7,17 +7,20 @@
 //
 
 import UIKit
-
+import CoreLocation
+import CoreGraphics
 
 class MainViewController: UITableViewController
 {
     
     @IBOutlet var mainTable:UITableView;
     
+    @IBOutlet var mainLBL :UILabel;
+    
     var cities : NSMutableArray = [];
+
+
     
-    
-                            
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -29,8 +32,30 @@ class MainViewController: UITableViewController
         cities = ["Pune","Delhi","Nagpur","Amravati"];
         
         
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "MainCell")
+
+        
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
+    
+    
+    
+    
+    // Location Manager
+    
+    func ConfigureUserLocation()
+    {
+        
+        
+        var locationMgr = LocationManager.sharedInstance
+        locationMgr.init1();
+        locationMgr.startLocationUpdate();
+
+    }
+    
+    
     
     
     @IBAction func leftBarButtonClicked(sender:UIBarButtonItem)
@@ -39,15 +64,13 @@ class MainViewController: UITableViewController
         if(self.tableView.editing)
         {
             sender.style = UIBarButtonItemStyle.Done
-            
-             self.navigationItem.leftBarButtonItem.title = "Done"
+            self.navigationItem.leftBarButtonItem.title = "Done"
         }
         else
         {
             
             sender.style = UIBarButtonItemStyle.Done
-
-             self.navigationItem.leftBarButtonItem.title = "Done"
+            self.navigationItem.leftBarButtonItem.title = "Done"
 
         }
         
@@ -60,8 +83,9 @@ class MainViewController: UITableViewController
     
     @IBAction func rightBarButtonClicked(sender:UIBarButtonItem)
     {
-     
-        addCityInputAletView ()
+        ConfigureUserLocation()
+
+      //  addCityInputAletView ()
         
     }
     
@@ -100,6 +124,7 @@ class MainViewController: UITableViewController
     }
     
     
+  
     
     
    // #pragma mark --  UItableView Data source
@@ -119,19 +144,47 @@ class MainViewController: UITableViewController
     {
         
         
-        let cell: MainCell =  MainCell(style: UITableViewCellStyle.Default, reuseIdentifier: "SwiftMainCell")
+      //  let cell: MainCell = MainCell(frame:CGRectMake(0, 0 , 320, 72) , reuseIdentifier:"MainCell")
+        
+        //MainCell(style: UITableViewCellStyle.Default, reuseIdentifier: "SwiftMainCell")
+        
+        
+        
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("MainCell") as UITableViewCell
+
+        
+        if(cell == nil)
+        {
+          cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier:"MainCell")
+        }
         
         var name1 : NSString  = cities[indexPath.row] as NSString
+
         
-        cell.textLabel.text = name1
+        var descriptionLbl:UILabel = UILabel(frame: CGRectMake(9, 6, 159, 26))
+        descriptionLbl.text = name1;
+        cell.addSubview(descriptionLbl)
         
-        cell.textLabel.textColor = UIColor.whiteColor()
+        
+        var cityNameLbl:UILabel = UILabel(frame: CGRectMake(9, 39, 186, 26))
+        cityNameLbl.text = name1;
+        cell.addSubview(cityNameLbl)
+        
+        
+        var tempLbl:UILabel = UILabel(frame: CGRectMake(221, 9, 91, 56))
+        tempLbl.text = name1;
+        cell.addSubview(tempLbl)
+        
+        var weatherIcon:UIImageView = UIImageView(frame: CGRectMake(181, 6, 37, 37))
+        weatherIcon.image = UIImage(named: "wth")
+        cell.addSubview(weatherIcon)
         
         cell.backgroundColor = UIColor.clearColor()
+        
 
         
         
-        return cell;
+        return  cell;
         
     }
     
